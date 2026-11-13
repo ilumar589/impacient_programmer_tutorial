@@ -1,12 +1,18 @@
 use bevy::{
     DefaultPlugins,
-    app::{App, Startup},
+    app::{App, Startup, Update},
     camera::Camera2d,
     color::Color,
-    ecs::{component::Component, system::Commands},
-    math::Vec3,
+    ecs::{
+        component::Component,
+        query::With,
+        system::{Commands, Res, Single},
+    },
+    input::{ButtonInput, keyboard::KeyCode},
+    math::{Vec2, Vec3},
     sprite::Text2d,
     text::{FontSize, TextColor, TextFont},
+    time::Time,
     transform::components::Transform,
     utils::default,
 };
@@ -15,6 +21,7 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         .add_systems(Startup, setup)
+        .add_systems(Update, move_player)
         .run();
 }
 
@@ -36,3 +43,34 @@ fn setup(mut commands: Commands) {
 
 #[derive(Component)]
 struct Player;
+
+fn move_player(
+    input: Res<ButtonInput<KeyCode>>,
+    time: Res<Time>,
+    mut player_transform: Single<&mut Transform, With<Player>>,
+) {
+    let mut direction = Vec2::ZERO;
+
+    if input.pressed(KeyCode::ArrowLeft) {
+        direction.x -= 1.0;
+    }
+
+    if input.pressed(KeyCode::ArrowRight) {
+        direction.x += 1.0;
+    }
+
+    if input.pressed(KeyCode::ArrowUp) {
+        direction.y += 1.0;
+    }
+
+    if input.pressed(KeyCode::ArrowDown) {
+        direction.y -= 1.0;
+    }
+
+    if direction != Vec2::ZERO {
+        let speed = 300.0; //pixels per second
+        let delta = direction.normalize() * speed * time.delta_secs();
+        player_transform.translation.x += delta.x;
+        player_transform.translation.y += delta.y;
+    }
+}
