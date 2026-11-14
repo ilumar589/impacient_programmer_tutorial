@@ -18,7 +18,7 @@ enum Facing {
 }
 
 #[derive(Component, Deref, DerefMut)]
-struct Animationtimer(Timer);
+struct AnimationTimer(Timer);
 
 #[derive(Component)]
 struct AnimationState {
