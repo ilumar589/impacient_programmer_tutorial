@@ -1,6 +1,6 @@
 use bevy::{
     DefaultPlugins,
-    app::{App, PluginGroup, Startup, Update},
+    app::{App, PluginGroup, Startup},
     asset::AssetPlugin,
     camera::{Camera2d, ClearColor},
     color::Color,
